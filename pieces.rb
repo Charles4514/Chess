@@ -1,4 +1,4 @@
-#ll. 125 and 16 need updated board functionality/interaction
+require './board.rb'
 class Piece
 
   attr_reader :position, :color
@@ -13,7 +13,7 @@ class Piece
   end
 
   def space_full?(pos)
-    if board(pos)[0].color == self.color
+    if board[pos].color == self.color
       return true
     end
     false
@@ -122,7 +122,7 @@ class Pawn < Piece
     positions = [[1,-1],[-1,-1]] if self.color == :Black
     positions.times do |p|
       new_position = pos[0] + p[0], pos[1] + p[1]
-      if board(new_position)[0].color != self.color
+      if board[pos].color != self.color
         possible_move << new_position
       end
     end
