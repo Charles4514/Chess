@@ -1,7 +1,7 @@
 require './board.rb'
 class Piece
 
-  attr_accessor :position, :color
+  attr_reader :color, :position
 
   def initialize(board, position, color)
     @board = board
@@ -10,24 +10,25 @@ class Piece
   end
 
   def moves
+    raise "DON'T DO THAT"
   end
 
   def space_full?(pos)
-    if @board[pos].nil?
-      return false
-    elsif @board[pos].color == self.color
-      return true
-    end
-    false
+    !@board[pos].nil? && @board[pos].color == self.color
   end
 
   def has_enemy?(pos)
-    if @board[pos].nil?
-      return false
-    elsif @board[pos].color != self.color
-      return true
-    end
-    false
+    !@board[pos].nil? && @board[pos].color != self.color
+  end
+
+  def move_piece(pos)
+    @position = pos
+  end
+
+  def dup_piece(old_piece, new_board)
+    duped = old_piece.dup
+    duped.board = new_board
+    duped
   end
 
   def check_move?(new_position)
@@ -43,7 +44,6 @@ end
 
 
 #Sliding Piece
-#need to make sure they stop at first enemy piece
 class SlidingPiece < Piece
 
   def moves
@@ -126,11 +126,25 @@ class Pawn < Piece
   def moves
     possible_moves = []
 
-    possible_moves = @position[0], @position[1] + 1 if self.color == :white
-    possible_moves = @position[0], @position[1] - 1 if self.color == :black
-    possible_moves << check_capture
+    if self.color == :white && @board[@position[0], @position[1] + 1].nil?
+      possible_moves << [@position[0], @position[1] + 1]
 
-    possible_moves
+      if self.position[0] = 1 && @board[@position[0], @position[1] + 2].nil?
+         possible_moves << [@position[0], @position[1] + 2]
+       end
+
+    end
+
+    if self.color == :black && @board[@position[0], @position[1] - 1].nil?
+      possible_moves << [@position[0], @position[1] - 1]
+
+      if self.position[0] = 6 && @board[@position[0], @position[1] - 2].nil?
+        possible_moves << [@position[0], @position[1] - 2]
+      end
+
+    end
+
+    possible_moves << check_capture
   end
 
   def check_capture
