@@ -1,5 +1,8 @@
 require './pieces.rb'
+require 'debugger'
 class Board
+
+  #attr_accessor :grid
 
   def initialize
     @grid = Array.new(8) {Array.new(8)}
@@ -13,27 +16,40 @@ class Board
   end
 
   def set_pieces
-    vars = [@grid, position, color]
-    back_row_courtiers = [Rook.new(*vars), Knight.new(*vars), Bishop.new(*vars)]
-    back_row = [back_row_courtiers, King.new(*vars),
-                Queen.new(*vars), back_row_courtiers.reverse]
-
+    #debugger
+    position = []
     color = :white
+    vars = [@grid, position, color]
+
     court = 0
     pawns = 1
-    2.times do
+
+
+    2.times do |i|
+
+      back_row_courtiers = [Rook.new(*vars), Knight.new(*vars),
+                            Bishop.new(*vars)]
+      back_row_courtiers2 = [Rook.new(*vars), Knight.new(*vars),
+                             Bishop.new(*vars)]
+      back_row = back_row_courtiers + [King.new(*vars),
+                 Queen.new(*vars)] + back_row_courtiers2.reverse
+
+      back_row = back_row.reverse if i == 1
 
       back_row.each_with_index do |piece,index|
+
         position = [court,index]
-        @grid[position] = piece
+        piece.position = position
+        self[position] = piece
       end
 
       8.times do |index|
         position = [pawns,index]
-        @grid[position] = Pawn.new(*vars)
+        self[position] = Pawn.new(*vars)
+        self[position].position = position
       end
 
-      color = :black
+      vars[2] = :black
       court = 7
       pawns = 6
     end
@@ -44,5 +60,12 @@ class Board
     row, col = pos
     @grid[row][col]
   end
+
+  def []=(pos,value)
+    row,col = pos
+    @grid[row][col] = value
+  end
+
+
 
 end

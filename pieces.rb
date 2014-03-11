@@ -1,7 +1,7 @@
 require './board.rb'
 class Piece
 
-  attr_reader :position, :color
+  attr_accessor :position, :color
 
   def initialize(board, position, color)
     @board = board
