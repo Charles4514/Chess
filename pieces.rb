@@ -13,14 +13,18 @@ class Piece
   end
 
   def space_full?(pos)
-    if board[pos].color == self.color
+    if @board[pos].nil?
+      return false
+    elsif @board[pos].color == self.color
       return true
     end
     false
   end
 
   def check_move?(new_position)
-    if new_position.between?(0,7) && !space_full?(new_position)
+    if new_position[0].between?(0,7) &&
+       new_position[1].between?(0,7) &&
+       !space_full?(new_position)
       return true
     end
     false
@@ -109,24 +113,24 @@ class Pawn < Piece
   def moves
     possible_moves = []
 
-    possible_moves = position[0], position[1] + 1 if self.color == :White
-    possible_moves = position[0], position[1] - 1 if self.color == :Black
-    possible_moves << check_capture(position)
+    possible_moves = @position[0], @position[1] + 1 if self.color == :white
+    possible_moves = @position[0], @position[1] - 1 if self.color == :black
+    possible_moves << check_capture
 
     possible_moves
   end
 
-  def check_capture(pos)
+  def check_capture
     possible_moves = []
-    positions = [[1,1],[-1,1]] if self.color == :White
-    positions = [[1,-1],[-1,-1]] if self.color == :Black
-    positions.times do |p|
-      new_position = pos[0] + p[0], pos[1] + p[1]
-      if board[pos].color != self.color
-        possible_move << new_position
+    positions = [[1,1],[-1,1]] if self.color == :white
+    positions = [[1,-1],[-1,-1]] if self.color == :black
+    positions.each do |p|
+      new_position = @position[0] + p[0], @position[1] + p[1]
+      if !@board[new_position].nil? && @board[new_position].color != self.color
+        possible_moves << new_position
       end
     end
-    possible_move
+    possible_moves
   end
 
 end
