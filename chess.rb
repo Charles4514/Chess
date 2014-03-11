@@ -118,17 +118,26 @@ end
 class Pawn < Piece
 
   def moves
+    possible_moves = []
 
+    possible_moves = position[0], position[1] + 1 if self.color == :White
+    possible_moves = position[0], position[1] - 1 if self.color == :Black
+    possible_moves << check_capture(position)
+
+    possible_moves
   end
 
   def check_capture(pos)
-    positions = [[1,1],[-1,1]]
-    positions.times do
-      if board(pos)[0].color != self.color
-
+    possible_moves = []
+    positions = [[1,1],[-1,1]] if self.color == :White
+    positions = [[1,-1],[-1,-1]] if self.color == :Black
+    positions.times do |p|
+      new_position = pos[0] + p[0], pos[1] + p[1]
+      if board(pos + p)[0].color != self.color
+        possible_move << pos + p
       end
     end
-
+    possible_move
   end
 
 end
