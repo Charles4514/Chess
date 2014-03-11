@@ -28,6 +28,14 @@ class Board
   end
 
   def move(start, end_pos)
+    temp = self[start]
+    raise 'There is no piece there.' if self[start] == nil
+
+    raise 'You cannot move there.' unless self[start].moves.include?(end_pos)
+
+    self[start] = nil
+    self[end_pos] = temp
+    self[end_pos].position = end_pos #make a method for this in pieces?
   end
 
   def set_pieces
