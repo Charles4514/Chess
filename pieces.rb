@@ -21,6 +21,15 @@ class Piece
     false
   end
 
+  def has_enemy?(pos)
+    if @board[pos].nil?
+      return false
+    elsif @board[pos].color != self.color
+      return true
+    end
+    false
+  end
+
   def check_move?(new_position)
     if new_position[0].between?(0,7) &&
        new_position[1].between?(0,7) &&
@@ -34,17 +43,21 @@ end
 
 
 #Sliding Piece
+#need to make sure they stop at first enemy piece
 class SlidingPiece < Piece
 
   def moves
     possible_moves = []
     move_dirs.each do |dir|
       new_position = @position
+      new_position = new_position[0]+dir[0], new_position[1]+dir[1]
 
       while check_move?(new_position)
-        new_position = new_position[0]+dir[0], new_position[1]+dir[1]
         possible_moves << new_position
+        break if has_enemy?(new_position)
+        new_position = new_position[0]+dir[0], new_position[1]+dir[1]
       end
+
     end
     possible_moves
   end
