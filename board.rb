@@ -24,7 +24,18 @@ class Board
     false
   end
 
-  def move(start, end_pos)
+  #test when game class is written!
+  def checkmate(color)
+    pieces = @grid.flatten.select { |piece| !piece.nil? && piece.color == color}
+
+    pieces.each do |piece|
+      return false if piece.valid_moves.length > 0
+    end
+    true
+  end
+
+  def move!(start, end_pos)
+    #maybe tighten up code here later?
     temp = self[start]
     raise 'There is no piece there.' if self[start] == nil
 
@@ -35,7 +46,22 @@ class Board
     self[end_pos].move_piece(end_pos)
   end
 
-  def row_setup(vars)
+  def move(start, end_pos)
+    temp = self[start]
+    raise 'There is no piece there.' if self[start] == nil
+
+    unless self[start].valid_moves.include?(end_pos)
+
+      raise 'You cannot move there.'
+
+    end
+
+    self[start] = nil
+    self[end_pos] = temp
+    self[end_pos].move_piece(end_pos)
+  end
+
+  def row_setup(*vars)
 
     back_row_courtiers = [Rook.new(*vars), Knight.new(*vars),
                           Bishop.new(*vars)]
@@ -55,7 +81,7 @@ class Board
 
     2.times do |i|
 
-      back_row = row_setup(vars)
+      back_row = row_setup(*vars)
 
       back_row = back_row.reverse if i == 1
 
@@ -63,6 +89,7 @@ class Board
         position = [court,index]
         vars[1] = position
         self[position] = piece
+        self[position].move_piece(position)
       end
 
       8.times do |index|
@@ -84,7 +111,7 @@ class Board
     @grid.each_with_index do |row, indexr|
       row.each_with_index do |piece, indexc|
         position = [indexr,indexc]
-        if self[position].dup.nil?
+        if self[position].nil?
           board_dup[position] = nil
         else
           board_dup[position] = board_dup[position].dup_piece(self[position], board_dup)
@@ -99,7 +126,7 @@ class Board
     @grid[row][col]
   end
 
-  private
+  # private
 
   def []=(pos,value)
     row,col = pos

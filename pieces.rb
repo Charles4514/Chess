@@ -13,6 +13,24 @@ class Piece
     raise "DON'T DO THAT"
   end
 
+  def valid_moves
+    old_pos = self.position
+    old_piece = self
+    safe_moves = []
+
+    moves.each do |move|
+      duped_board = @board.board_dup
+      dup_piece = duped_board[old_pos]
+      duped_board.move!(old_pos, move)
+      dup_piece.move_piece(move)
+
+      unless duped_board.in_check?(old_piece.color)
+        safe_moves << move
+      end
+    end
+    safe_moves
+  end
+
   def space_full?(pos)
     !@board[pos].nil? && @board[pos].color == self.color
   end
@@ -26,9 +44,7 @@ class Piece
   end
 
   def dup_piece(old_piece, new_board)
-    duped = old_piece.dup
-    duped.board = new_board
-    duped
+    old_piece.class.new(new_board, old_piece.position, old_piece.color)
   end
 
   def check_move?(new_position)
@@ -95,11 +111,12 @@ class SteppingPiece < Piece
   def moves
     possible_moves = []
     move_pattern.each do |move|
-      new_position = [position[0] + move[0]] + [position[1] + move[1]]
+      new_position = [@position[0] + move[0]] + [@position[1] + move[1]]
       if check_move?(new_position)
         possible_moves << new_position
       end
     end
+    possible_moves
   end
 
 end
@@ -126,25 +143,26 @@ class Pawn < Piece
   def moves
     possible_moves = []
 
-    if self.color == :white && @board[@position[0], @position[1] + 1].nil?
+    if self.color == :white && @board[[@position[0], @position[1] + 1]].nil?
       possible_moves << [@position[0], @position[1] + 1]
 
-      if self.position[0] = 1 && @board[@position[0], @position[1] + 2].nil?
+      if self.position[0] = 1 && @board[[@position[0], @position[1] + 2]].nil?
          possible_moves << [@position[0], @position[1] + 2]
        end
 
     end
 
-    if self.color == :black && @board[@position[0], @position[1] - 1].nil?
+    if self.color == :black && @board[[@position[0], @position[1] - 1]].nil?
       possible_moves << [@position[0], @position[1] - 1]
 
-      if self.position[0] = 6 && @board[@position[0], @position[1] - 2].nil?
+      if self.position[0] = 6 && @board[[@position[0], @position[1] - 2]].nil?
         possible_moves << [@position[0], @position[1] - 2]
       end
 
     end
 
     possible_moves << check_capture
+    possible_moves
   end
 
   def check_capture
