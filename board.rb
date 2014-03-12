@@ -25,7 +25,7 @@ class Board
   end
 
   #test when game class is written!
-  def checkmate(color)
+  def checkmate(color) #maybe get to return both checkmate and color
     pieces = @grid.flatten.select { |piece| !piece.nil? && piece.color == color}
 
     pieces.each do |piece|
@@ -46,6 +46,7 @@ class Board
     self[end_pos].move_piece(end_pos)
   end
 
+  #add rescues in game class
   def move(start, end_pos)
     temp = self[start]
     raise 'There is no piece there.' if self[start] == nil
