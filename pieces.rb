@@ -14,19 +14,15 @@ class Piece
   end
 
   def valid_moves
-    #debugger
     old_pos = self.position
     old_piece = self
     safe_moves = []
 
     moves.each do |move|
-      duped_board = @board.board_dup
-      #duped_board[old_pos] = dup_piece(self, duped_board)
+      duped_board = @board.dup
       duped_piece = duped_board[old_pos]
       duped_board.move!(old_pos, move)
       duped_piece.move_piece(move)
-
-      #debugger
 
       unless duped_board.in_check?(old_piece.color)
         safe_moves << move
@@ -43,8 +39,8 @@ class Piece
   def has_enemy?(pos)
     !@board[pos].nil? && @board[pos].color != self.color
   end
-  #rename as just dup and check other code
-  def dup_piece(old_piece, new_board)
+
+  def dup(old_piece, new_board)
     old_piece.class.new(new_board, old_piece.position, old_piece.color)
   end
 
@@ -60,9 +56,10 @@ class Piece
 
 end
 
-
-#Sliding Piece
 class SlidingPiece < Piece
+
+  DIAGONALS = [[1,1],[1,-1],[-1,1],[-1,-1]]
+  ORTHOGONALS = [[0,1],[1,0],[0,-1],[-1,0]]
 
   def moves
     possible_moves = []
@@ -82,12 +79,11 @@ class SlidingPiece < Piece
 
 end
 
-#Sub-Sub-Class
 #have constants for deltas
 class Bishop < SlidingPiece
 
   def move_dirs
-    [[1,1],[1,-1],[-1,1],[-1,-1]]
+    DIAGONALS
   end
 
 end
@@ -95,7 +91,7 @@ end
 class Rook < SlidingPiece
 
   def move_dirs
-    [[0,1],[1,0],[0,-1],[-1,0]]
+    ORTHOGONALS
   end
 
 end
@@ -103,7 +99,7 @@ end
 class Queen < SlidingPiece
 
   def move_dirs
-    [[1,1],[1,-1],[-1,1],[-1,-1],[0,1],[1,0],[0,-1],[-1,0]]
+    ORTHOGONALS + DIAGONALS
   end
 
 end
