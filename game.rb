@@ -13,10 +13,10 @@ class Game
     while true
 
       [player1,player2].each do |player_turn|
-
+        checkmate(player_turn.color)
         player_turn.play_turn
 
-        checkmate(player_turn.color)
+
 
 
 
@@ -42,10 +42,11 @@ class Player
   def play_turn(board)
 
     begin
-    start_pos, end_pos = input_move
-    board.move(start_pos, end_pos)
-    rescue
-
+      start_pos, end_pos = input_move
+      board.move(start_pos, end_pos)
+    rescue StandardError => e
+      puts "#{e.message}"
+      retry
   end
 
 end

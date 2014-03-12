@@ -35,12 +35,7 @@ class Board
   end
 
   def move!(start, end_pos)
-    #maybe tighten up code here later?
     temp = self[start]
-    raise 'There is no piece there.' if self[start] == nil
-
-    raise 'You cannot move there.' unless self[start].moves.include?(end_pos)
-
     self[start] = nil
     self[end_pos] = temp
     self[end_pos].move_piece(end_pos)
@@ -49,12 +44,14 @@ class Board
   #add rescues in game class
   def move(start, end_pos)
     temp = self[start]
-    raise 'There is no piece there.' if self[start] == nil
 
+    if self[start] == nil
+      raise StandardError.new 'There is no piece there.'
+    end
+
+    #separate moves that are impossible from ones that would put you in check
     unless self[start].valid_moves.include?(end_pos)
-
-      raise 'You cannot move there.'
-
+      raise StandardError.new 'You cannot move there.'
     end
 
     self[start] = nil
