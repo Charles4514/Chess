@@ -1,4 +1,5 @@
 require './board.rb'
+require 'debugger'
 class Piece
 
   attr_reader :color, :position
@@ -14,15 +15,19 @@ class Piece
   end
 
   def valid_moves
+    #debugger
     old_pos = self.position
     old_piece = self
     safe_moves = []
 
     moves.each do |move|
       duped_board = @board.board_dup
-      dup_piece = duped_board[old_pos]
+      #duped_board[old_pos] = dup_piece(self, duped_board)
+      duped_piece = duped_board[old_pos]
       duped_board.move!(old_pos, move)
-      dup_piece.move_piece(move)
+      duped_piece.move_piece(move)
+
+      #debugger
 
       unless duped_board.in_check?(old_piece.color)
         safe_moves << move
@@ -143,39 +148,38 @@ class Pawn < Piece
   def moves
     possible_moves = []
 
-    if self.color == :white && @board[[@position[0], @position[1] + 1]].nil?
-      possible_moves << [@position[0], @position[1] + 1]
+    if self.color == :white && @board[[@position[0] + 1, @position[1]]].nil?
+      possible_moves << [@position[0] + 1, @position[1]]
 
-      if self.position[0] = 1 && @board[[@position[0], @position[1] + 2]].nil?
-         possible_moves << [@position[0], @position[1] + 2]
+      if self.position[0] == 1 && @board[[@position[0] + 2, @position[1] ]].nil?
+         possible_moves << [@position[0] + 2, @position[1]]
        end
 
     end
 
-    if self.color == :black && @board[[@position[0], @position[1] - 1]].nil?
-      possible_moves << [@position[0], @position[1] - 1]
+    if self.color == :black && @board[[@position[0] - 1, @position[1]]].nil?
+      possible_moves << [@position[0] - 1, @position[1]]
 
-      if self.position[0] = 6 && @board[[@position[0], @position[1] - 2]].nil?
-        possible_moves << [@position[0], @position[1] - 2]
+      if self.position[0] == 6 && @board[[@position[0] - 2, @position[1] ]].nil?
+        possible_moves << [@position[0] - 2, @position[1]]
       end
 
     end
 
-    possible_moves << check_capture
+    possible_moves += check_capture
     possible_moves
   end
 
   def check_capture
     possible_moves = []
-    positions = [[1,1],[-1,1]] if self.color == :white
-    positions = [[1,-1],[-1,-1]] if self.color == :black
+    positions = [[1,1],[1,-1]] if self.color == :white
+    positions = [[-1,1],[-1,-1]] if self.color == :black
     positions.each do |p|
-      new_position = @position[0] + p[0], @position[1] + p[1]
+      new_position = [@position[0] + p[0], @position[1] + p[1]]
       if !@board[new_position].nil? && @board[new_position].color != self.color
         possible_moves << new_position
       end
     end
     possible_moves
   end
-
 end

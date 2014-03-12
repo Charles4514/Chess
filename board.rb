@@ -29,7 +29,7 @@ class Board
     pieces = @grid.flatten.select { |piece| !piece.nil? && piece.color == color}
 
     pieces.each do |piece|
-      return false if piece.valid_moves.length > 0
+      return false unless piece.valid_moves.empty?
     end
     true
   end
@@ -112,7 +112,9 @@ class Board
         if self[position].nil?
           board_dup[position] = nil
         else
-          board_dup[position] = board_dup[position].dup_piece(self[position], board_dup)
+          # puts self[position].position
+#           puts self[position].class
+          board_dup[position] = self[position].dup_piece(self[position], board_dup)
         end
       end
     end
