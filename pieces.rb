@@ -31,11 +31,10 @@ class Piece
     safe_moves
   end
 
-  #put these methods in board class
   def space_full?(pos)
     !@board[pos].nil? && @board[pos].color == self.color
   end
-  #this too
+
   def has_enemy?(pos)
     !@board[pos].nil? && @board[pos].color != self.color
   end
@@ -157,7 +156,6 @@ class Pawn < Piece
       if self.position[0] == 6 && @board[[position[0] - 2, position[1] ]].nil?
         possible_moves << [position[0] - 2, position[1]]
       end
-
     end
 
     possible_moves += check_capture
@@ -170,7 +168,7 @@ class Pawn < Piece
     positions = [[-1,1],[-1,-1]] if self.color == :black
     positions.each do |p|
       new_position = [@position[0] + p[0], @position[1] + p[1]]
-      if !@board[new_position].nil? && @board[new_position].color != self.color
+      if !@board[new_position].nil? && has_enemy?(new_position)
         possible_moves << new_position if check_move?(new_position)
       end
     end
