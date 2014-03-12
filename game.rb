@@ -13,7 +13,7 @@ class Game
 
   end
 
-  def render_board
+  def render
     @board.grid.reverse.each do |row|
       row.each do |space|
         unless space.nil?
@@ -24,16 +24,16 @@ class Game
       end
       print "\n"
     end
+    nil
   end
 
   def play
-    render_board
-    while true
-
+    render
+    loop do
       [@player1, @player2].each do |player_turn|
-        return "#{something something}" if @board.checkmate(player_turn.color)
+        raise NotImplementedError if @board.checkmate(player_turn.color)
         player_turn.play_turn(@board)
-        render_board
+        render
       end
 
     end
@@ -53,6 +53,9 @@ class Player
 
     begin
       start_pos, end_pos = input_move
+      if board[start_pos].color != color
+        raise StandardError.new "That's not your piece!"
+      end
       board.move(start_pos, end_pos)
     rescue StandardError => e
       puts "#{e.message}"
